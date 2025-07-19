@@ -5,7 +5,7 @@ public class CrcSwift {
      * Compute CRC-8 for manual set of parameters
      */
     public static func computeCrc8(
-        _ data: [UInt8],
+        _ data: UnsafeBufferPointer<UInt8>,
         initialCrc: UInt8 = 0x00,
         polynom: UInt8 = 0x07,
         xor: UInt8 = 0x00,
@@ -49,16 +49,19 @@ public class CrcSwift {
         refIn: Bool = false,
         refOut: Bool = false
     ) -> UInt8 {
-        let preparedData = DataHelper.convertDataToByteArray(data);
-        
-        return computeCrc8(
-            preparedData,
-            initialCrc: initialCrc,
-            polynom: polynom,
-            xor: xor,
-            refIn: refIn,
-            refOut: refOut
-        )
+        return data.withUnsafeBytes {
+            guard let pointer = $0.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                return 0
+            }
+            return computeCrc8(
+                UnsafeBufferPointer(start: pointer, count: data.count),
+                initialCrc: initialCrc,
+                polynom: polynom,
+                xor: xor,
+                refIn: refIn,
+                refOut: refOut
+            )
+        }
     }
     
     
@@ -67,7 +70,7 @@ public class CrcSwift {
      * Compute CRC-16 for manual set of parameters
      */
     public static func computeCrc16(
-        _ data: [UInt8],
+        _ data: UnsafeBufferPointer<UInt8>,
         initialCrc: UInt16 = 0xFFFF,
         polynom: UInt16 = 0x1021,
         xor: UInt16 = 0x0000,
@@ -111,16 +114,19 @@ public class CrcSwift {
         refIn: Bool = false,
         refOut: Bool = false
     ) -> UInt16 {
-        let preparedData = DataHelper.convertDataToByteArray(data);
-        
-        return computeCrc16(
-            preparedData,
-            initialCrc: initialCrc,
-            polynom: polynom,
-            xor: xor,
-            refIn: refIn,
-            refOut: refOut
-        )
+        return data.withUnsafeBytes {
+            guard let pointer = $0.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                return 0
+            }
+            return computeCrc16(
+                UnsafeBufferPointer(start: pointer, count: data.count),
+                initialCrc: initialCrc,
+                polynom: polynom,
+                xor: xor,
+                refIn: refIn,
+                refOut: refOut
+            )
+        }
     }
     
     /**
@@ -188,15 +194,16 @@ public class CrcSwift {
      */
     public static func computeCrc8(_ data: [UInt8], mode: CRC8_TYPE = .defaultCrc) -> UInt8 {
         let config = ConfigHelper.getCrc8VariablesByMode(mode: mode)
-        
-        return computeCrc8(
-            data,
-            initialCrc: config.initialCrc,
-            polynom: config.polynom,
-            xor: config.xor,
-            refIn: config.refIn,
-            refOut: config.refOut
-        )
+        return data.withUnsafeBufferPointer {
+            return computeCrc8(
+                $0,
+                initialCrc: config.initialCrc,
+                polynom: config.polynom,
+                xor: config.xor,
+                refIn: config.refIn,
+                refOut: config.refOut
+            )
+        }
     }
     
     /**
@@ -213,15 +220,16 @@ public class CrcSwift {
      */
     public static func computeCrc16(_ data: [UInt8], mode: CRC16_TYPE = .ccittFalse) -> UInt16 {
         let config = ConfigHelper.getCrc16VariablesByMode(mode: mode)
-        
-        return computeCrc16(
-            data,
-            initialCrc: config.initialCrc,
-            polynom: config.polynom,
-            xor: config.xor,
-            refIn: config.refIn,
-            refOut: config.refOut
-        )
+        return data.withUnsafeBufferPointer {
+            return computeCrc16(
+                $0,
+                initialCrc: config.initialCrc,
+                polynom: config.polynom,
+                xor: config.xor,
+                refIn: config.refIn,
+                refOut: config.refOut
+            )
+        }
     }
     
     /**
