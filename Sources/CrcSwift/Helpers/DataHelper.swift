@@ -19,7 +19,7 @@ class DataHelper {
         var value = data
         value = (((value & 0xaa) >> 1) | ((value & 0x55) << 1))
         value = (((value & 0xcc) >> 2) | ((value & 0x33) << 2))
-        return (((value & 0xf0) >> 4) | ((value & 0x0f) << 4))
+        return ((value >> 4) | (value << 4))
     }
 
     static func reverseBits(_ data: UInt16) -> UInt16 {
@@ -27,7 +27,7 @@ class DataHelper {
         value = (((value & 0xaaaa) >> 1) | ((value & 0x5555) << 1))
         value = (((value & 0xcccc) >> 2) | ((value & 0x3333) << 2))
         value = (((value & 0xf0f0) >> 4) | ((value & 0x0f0f) << 4))
-        return (((value & 0xff00) >> 8) | ((value & 0x00ff) << 8))
+        return ((value >> 8) | (value << 8))
     }
 
     static func reverseBits(_ data: UInt32) -> UInt32 {
